@@ -28,24 +28,36 @@ def word_in_graph(word, graph, letters):
     for start in starts:
         stack = [start]
         needed = list(word[1::][::-1]) # top is the next letter to find
-        found = False
+
+        path_exists = True
         current = start
-        while len(stack) > 0:
-            letter_needed = needed.pop()
-            exits = [n for n in graph[current] if letters[n] == letter_needed]
+        letter_needed = needed.pop()
+        visited = []
+        while path_exists:
+            exits = [i for i in graph[current] if letters[i] == letter_needed and i not in visited]
             if not exits:
-                current = stack.pop()
                 needed.append(letter_needed)
+                letter_needed = letters[current]
+
+                visited.append(current)
+                current = stack.pop()
             else:
+                if len(needed) == 0:
+                    return True
+
+                stack.append(current)
                 current = exits[0]
+                letter_needed = needed.pop()
 
-                
+            if not stack and current == start:
+                path_exists = False
 
-    
     return False
         
 
-letters = "abcdefghijklmnopqrstuvwxy"
+letters = "ahulsangirdeitmp"
+graph = create_graph(4, 4)
+print(word_in_graph('ahulgep', graph, letters))
     
 # for word in open('words.txt','r').readlines():
 #     if word_is_possible(word, letters):
